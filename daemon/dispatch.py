@@ -40,7 +40,7 @@ class DispatchFactory(TCPConnectionFactory):
         TCPConnectionFactory.__init__(self, *args, **kwargs)
         self.dispatch_connections = {}
         self.factory = DispatchProtocolFactory(self)
-        port = int(config['[global]']['dispatch.port'])
+        port = int(config['global']['dispatch.port'])
         logger.info('Listening Orbit@%s (legacy dispatch protocol)' % port)
         reactor.listenTCP(port, self.factory)
       
@@ -50,6 +50,12 @@ class DispatchFactory(TCPConnectionFactory):
         }]
         for recipient in headers['recipients']:
             if recipient in self.dispatch_connections:
+                if 'django' in config:
+                    from util import is_authenticated_django_user
+                    failure = not is_authenticated_django_user(recipient)
+                else:
+                    failure = True
+            if not failure:
                 self.dispatch_connections[recipient].send(body)
             else:
                 response[0] = 'Failure'

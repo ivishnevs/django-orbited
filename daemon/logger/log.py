@@ -10,8 +10,8 @@ def setup(configmap):
         return val[0]
     defaults = {}
     for logtype in LOGTYPES:
-        defaults[logtype] = []        
-        a = configmap['[logging]']
+        defaults[logtype] = []
+        a = configmap['logging']
         b =a[logtype]
         outputs = b.split(',')
         for loc in outputs:
@@ -28,9 +28,9 @@ def setup(configmap):
             else:
                 defaults[logtype].append(FileLog(loc))
             defaults[logtype][-1].open()
-    enabled = configmap['[logging]']['enabled.default'].split(',')
+    enabled = configmap['logging']['enabled.default'].split(',')
     overrides = {}
-    for key, value in configmap['[loggers]'].items():
+    for key, value in configmap['loggers'].items():
         overrides[key] = value.split(',')
     val.append(LoggerRoot(enabled, defaults, overrides))
     return val[0]

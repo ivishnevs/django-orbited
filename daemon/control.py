@@ -7,7 +7,7 @@ from start import logger
 from start import main as orbited_main
 from config import map as config
 
-pid_location = config['[global]']['pid.location']
+pid_location = config['global']['pid.location']
 
 def start():
     print "Starting Orbited Daemon"
