@@ -11,6 +11,15 @@ log = function (data) {
     orbitedLog = document.getElementById("orbitedLog");
     orbitedLog.innerHTML += data + "<br/>";
 }
+
+/*var conn = new WebSocket("ws://localhost:8001/demo");
+
+conn.onopen = function(evt) { log("Conn opened"); }
+conn.onread = function(evt) { log("Read: " + evt.data); }
+conn.onclose = function(evt) { log("Conn closed"); }
+conn.send("Hello?");
+*/
+
 </script>
 
 
