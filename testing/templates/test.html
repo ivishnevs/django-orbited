@@ -1,0 +1,29 @@
+{% load orbited_files %}
+<html>
+
+<head>
+    <title>django-orbited - Django and Orbited made easy!</title>
+
+{% orbited_files %}
+
+<script language="javascript" type="text/javascript">
+log = function (data) {
+    orbitedLog = document.getElementById("orbitedLog");
+    orbitedLog.innerHTML += data + "<br/>";
+}
+</script>
+
+
+</head>
+
+<body>
+<h1>django-orbited - Django and Orbited made easy!</h1>
+Test page.
+<h2>Orbited events log</h2>
+<div id="orbitedLog"></div>
+
+
+<h2><a href="{% url django.contrib.auth.views.logout %}">Logout</a></h2>
+</body>
+
+</html>
