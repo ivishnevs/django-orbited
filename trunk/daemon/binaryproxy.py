@@ -97,7 +97,7 @@ class BinaryProxyConnection(TCPConnection):
             self.host = host
             self.port = int(port)
             # TODO DRY this with ProxyConnection.
-            if (self.host, self.port) not in config['[access]']:
+            if (self.host, self.port) not in config['access']:
                 log.warn('unauthorized', data)
                 raise (Exception("Unauthorized"), "(host, port) pair not authorized for proxying")
             log.access(self.getClientIP(), "TCP/bin", " -> ", self.host, ":", self.port, " [ ", self.getClientIP(), " ]")

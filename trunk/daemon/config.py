@@ -4,51 +4,53 @@ import os.path
 import sys
 
 map = {
-    '[global]': {
-        #'reactor': 'epoll',
-
+    'global': {
+        'reactor': 'epoll',
         #'echo.enabled': '1',
         #'proxy.enabled': '1',
         #'binaryproxy.enabled': '1',
         #'websocket.enabled': '1',
-        #'dispatch.enabled': '1',
-        #'dispatch.port': '9000',
-
+        'dispatch.enabled': '1',
+        'dispatch.port': '9000',
         'pid.location': '/tmp/orbited.pid'
     },
 
-    '[logging]': {
-        'debug': 'SCREEN',
-        'info': 'SCREEN',
-        'access': 'SCREEN',
-        'warn': 'SCREEN',
-        'error': 'SCREEN',
+    'logging': {
+        'debug': 'STDOUT',
+        'info': 'STDOUT',
+        'access': 'STDOUT',
+        'warn': 'STDOUT',
+        'error': 'STDOUT',
         'enabled.default': 'info,access,warn,error',
     },
 
-    '[loggers]': {
-        #'WebSocket': 'debug,info,access,warn,error',
+    'loggers': {
+        'WebSocket': 'debug,info,access,warn,error',
     },
 
     # XXX why?
     'default_config': 1, # set to 0 later if we load a config file
 
-    '[listen]': [
-        #'http://:8001',
+    'listen': [
+        'http://:8001',
     ],
 
-    '[ssl]': {
+    'ssl': {
         #'key': 'orbited.key',
         #'crt': 'orbited.crt',
     },
 
-    '[access]': [
+    'access': [
         #('irc.freenode.net', 6667),
     ],
 
-    '[static]': {
+    'static': {
         #'tmp': '/tmp',
-    }
+    },
+    
+    'django': {
+        'testing': os.path.join("..", "testing")
+    },
 }
 
 def update(**kwargs):

@@ -57,7 +57,7 @@ class ProxyConnection(TCPConnection):
             host, port = data.split(':')
             self.host = host
             self.port = int(port)
-            if (self.host, self.port) not in config['[access]']:
+            if (self.host, self.port) not in config['access']:
                 logger.warn('unauthorized', data)
                 raise (Exception("Unauthorized"), "(host, port) pair not authorized for proxying")
             logger.access(self.getClientIP(), "TCP/raw", " -> ", self.host, ":", self.port, " [ ", self.getClientIP(), " ]")

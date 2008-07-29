@@ -1,7 +1,7 @@
 if False:
     import log
     config = {
-        '[logging]': {
+        'logging': {
             'debug': 'SCREEN',
             'info': 'SCREEN',
             'access': 'SCREEN',
@@ -9,7 +9,7 @@ if False:
             'error': 'SCREEN,error.log',
             'enabled.default': '1',
         },
-        '[loggers]': {
+        'loggers': {
             'ACCESS': 1,
             'HTTPDaemon': '2',
         }

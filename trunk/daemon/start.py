@@ -1,9 +1,11 @@
+#!/usr/bin/env python
 import os
 import sys
 import urlparse
 
-from orbited import config
-from orbited.config import map as configmap
+import config
+from config import map as configmap
+
 
 # NB: this is set after we load the configuration at "main".
 logger = None
@@ -15,21 +17,21 @@ def _import(name):
 def _setup_protocols(root):
     protocols = [
         #child_path     config_key      factory_class_import
-        ('echo',        'echo',         'orbited.echo.EchoFactory'),
-        ('proxy',       'proxy',        'orbited.proxy.SimpleProxyFactory'),
-        ('binaryproxy', 'binaryproxy',  'orbited.binaryproxy.BinaryProxyFactory'),
-        ('websocket',   'websocket',    'orbited.websocket.WebSocketFactory'),
-        ('legacy',      'dispatch',     'orbited.dispatch.DispatchFactory'),
+        ('echo',        'echo',         'echo.EchoFactory'),
+        ('proxy',       'proxy',        'proxy.SimpleProxyFactory'),
+        ('binaryproxy', 'binaryproxy',  'binaryproxy.BinaryProxyFactory'),
+        ('websocket',   'websocket',    'websocket.WebSocketFactory'),
+        ('legacy',      'dispatch',     'dispatch.DispatchFactory'),
     ]
     for child_path, config_key, factory_class_import in protocols:
-        if configmap['[global]'].get('%s.enabled' % config_key) == '1':
+        if configmap['global'].get('%s.enabled' % config_key) == '1':
             factory_class = _import(factory_class_import)
             root.putChild(child_path, factory_class())
             logger.info('%s protocol active' % config_key)
 
 def _setup_static(root):
     from twisted.web import static
-    for key, val in configmap['[static]'].items():
+    for key, val in configmap['static'].items():
         if key == 'INDEX':
             key = ''
         if root.getStaticEntity(key):
@@ -40,14 +42,14 @@ def _setup_static(root):
 def main():
     # load configuration from configuration file and from command
     # line arguments.
-    config.setup(sys.argv)
+    # config.setup(sys.argv)
 
     # we can now safely get loggers.
-    from orbited.logger import get_logger
+    from logger import get_logger
     global logger; logger = get_logger('Daemon')
 
     # NB: we need to install the reactor before using twisted.
-    reactor_name = configmap['[global]'].get('reactor')
+    reactor_name = configmap['global'].get('reactor')
     if reactor_name:
         install = _import('twisted.internet.%sreactor.install' % reactor_name)
         install()
@@ -66,7 +68,7 @@ def main():
     _setup_protocols(root)
     _setup_static(root)
 
-    for addr in configmap['[listen]']:
+    for addr in configmap['listen']:
         url = urlparse.urlparse(addr)
         hostname = url.hostname or ''
         if url.scheme == 'http':
@@ -74,8 +76,8 @@ def main():
             reactor.listenTCP(url.port, site, interface=hostname)
         elif url.scheme == 'https':
             from twisted.internet import ssl
-            crt = configmap['[ssl]']['crt']
-            key = configmap['[ssl]']['key']
+            crt = configmap['ssl']['crt']
+            key = configmap['ssl']['key']
             try:
                 ssl_context = ssl.DefaultOpenSSLContextFactory(key, crt)
             except ImportError:
