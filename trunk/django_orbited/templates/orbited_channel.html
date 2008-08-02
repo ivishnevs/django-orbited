@@ -1,0 +1,6 @@
+<script type="text/javascript" language="javascsript">
+if (typeof(dispatcher_{{ client.session_key }}) == 'undefined') {
+    dispatcher_{{ client.session_key }} = {};
+}
+dispatcher_{{ client.session_key }}['{{ client.channel }}'] = {{ client.callback }};
+</script>

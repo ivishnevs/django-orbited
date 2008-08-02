@@ -1,0 +1,16 @@
+<script type="text/javascript" language="javascsript"
+        src="{{ static_url }}{{ method }}.js">
+</script>
+{% if port %}
+<script type="text/javascript" language="javascsript">
+ORBITED_PORT = {{ port }};
+function dispatcher_{{ session_key }}_callback(json_data) {
+    data = eval('('+ json_data +')');
+    dispatcher = dispatcher_{{ session_key }};
+    callback = dispatcher[data.channel];
+    callback(data.body);
+}
+Orbited.connect(dispatcher_{{ session_key }}_callback, "{{ recipient }}");
+</script>
+{% endif %}
+
