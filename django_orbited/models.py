@@ -42,7 +42,6 @@ class Client(models.Model):
         return recipient
 
     def send(self, data, as_json=True):
-        import pdb; pdb.set_trace()
         client = OrbitedClient()
         if hasattr(settings, 'ORBITED_PORT'):
             client.port = settings.ORBITED_PORT
