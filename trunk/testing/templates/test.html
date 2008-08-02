@@ -1,31 +1,22 @@
-{% load orbited_files %}
+{% load orbited %}
 <html>
 
 <head>
     <title>django-orbited - Django and Orbited made easy!</title>
 
-{% orbited_files %}
 
 <script language="javascript" type="text/javascript">
 log = function (data) {
     orbitedLog = document.getElementById("orbitedLog");
     orbitedLog.innerHTML += data + "<br/>";
 }
-
-/*var conn = new WebSocket("ws://localhost:8001/demo");
-
-conn.onopen = function(evt) { log("Conn opened"); }
-conn.onread = function(evt) { log("Read: " + evt.data); }
-conn.onclose = function(evt) { log("Conn closed"); }
-conn.send("Hello?");
-*/
-
 </script>
-
+{% orbited channel "updates" on "log" %}
 
 </head>
 
 <body>
+{% orbited %}
 <h1>django-orbited - Django and Orbited made easy!</h1>
 Test page.
 <h2>Orbited events log</h2>

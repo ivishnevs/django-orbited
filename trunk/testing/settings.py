@@ -31,7 +31,7 @@ DATE_FORMAT = 'd/m/Y'
 
 # Language code for this installation. All choices can be found here:
 # http://www.w3.org/TR/REC-html40/struct/dirlang.html#langcodes
-LANGUAGE_CODE = 'es_ES'
+LANGUAGE_CODE = 'en_EN'
 
 LANGUAGES = (
   ('es', _('Spanish')),
@@ -75,6 +75,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.debug',
     'django.core.context_processors.i18n',
     'django.core.context_processors.media',
+    'django_orbited.context_processors.orbited',
 )
 
 MIDDLEWARE_CLASSES = (
