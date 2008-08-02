@@ -6,7 +6,7 @@ from django.utils.translation import gettext as _
 
 from django_orbited.client import Client
 
-#@login_required
+@login_required
 def index(request):
     client = Client("update", user=request.user, session_data=request.session.session_key)
 
