@@ -12,32 +12,28 @@ class OrbitedFilesNode(Node):
 
     For example:
         {% orbited %}
-
-    Or:
-        {% orbited WebSocket %}
-    """
-    def __init__(self, method=None):
-        if method in ("BinaryTCPSocket", "TCPSocket", "WebSocket"):
-            self.method = method
-        else:
-            self.method = "orbited"
-
+   """
     def __repr__(self):
         return "<OrbitedFilesNode>"
 
     def render(self, context):
         port = None
-        if hasattr(settings, "ORBITED_PORT") and settings.ORBITED_PORT:
+        if hasattr(settings, 'ORBITED_PORT') and settings.ORBITED_PORT:
             port = settings.ORBITED_PORT
+        socket_method = "orbited"
+        if hasattr(settings, 'ORBITED_SOCKET_METHOD') \
+        and settings.ORBITED_SOCKET_METHOD in ("BinaryTCPSocket", "TCPSocket", "WebSocket"):
+            socket_method = settings.ORBITED_SOCKET_METHOD
         user = context.get('user')
         session_key = context.get('session_key')
         recipient = "%s@%s, %s, /orbited" % (user.username, 
-                                           session_key, user.id)
+                                             session_key, user.id)
         t = get_template('orbited_files.html')
         return t.render(Context({
                                  'port': port,
                                  'static_url': settings.ORBITED_STATIC_URL,
-                                 'method': self.method,
+                                 'socket_method': socket_method,
+                                 'user': user,
                                  'session_key': session_key,
                                  'recipient': recipient
                                 }))
@@ -62,6 +58,7 @@ class OrbitedChannelNode(Node):
                                                        channel=self.channel,
                                                        callback=self.callback)
         client.session_key = session_key
+        client.save()
         t = get_template('orbited_channel.html')
         return t.render(Context({'client': client}))
 
@@ -71,8 +68,6 @@ def do_orbited(parser, token):
     bits_length = len(bits)
     if bits_length == 1:
         return OrbitedFilesNode()
-    elif bits_length == 2:
-        return OrbitedFilesNode(bits[1])
     elif bits_length == 5 and bits[1] == 'channel' and bits[3] == 'on':
         cleaned_channel = bits[2]
         if cleaned_channel[0] in ("\"", "'") and cleaned_channel[-1] in ("\"", "'"):
@@ -82,9 +77,8 @@ def do_orbited(parser, token):
             cleaned_callback = cleaned_callback[1:-1]
         return OrbitedChannelNode(cleaned_channel, cleaned_callback)
     else:
-        raise TemplateSyntaxError, "%r tag requires no argument, socket type " \
-                                   "argument or channel name and javascript " \
-                                   "callback function." \
+        raise TemplateSyntaxError, "%r tag requires no argument or channel " \
+                                   "name and javascript callback function." \
                                    % token.contents.split()[0]
 
 register.tag('orbited', do_orbited)

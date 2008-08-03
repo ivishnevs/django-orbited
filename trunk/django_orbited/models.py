@@ -8,13 +8,12 @@ from django.utils.translation import ugettext as _
 
 
 class ClientManager(models.Manager):
-    """Send message to all users or suscribed to a channel"""
-    def send(self, data, channel=None, as_json=True):
+    """Send message to all users or users suscribed to a channel"""
+    def send(self, data, channel=None):
         if channel:
             clients = Client.objects.filter(channel=channel)
         else:
             clients = Client.objects.all()
-        responses = []
         recipients = []
         for client in clients:
             recipients.append(client.get_recipient())
@@ -23,8 +22,8 @@ class ClientManager(models.Manager):
             client.port = int(settings.ORBITED_PORT)
         client.connect()
         body = {'channel': channel, 'body': data}
-        response = client.event(recipients, body, json=as_json)
-        self.client.disconnect()
+        response = client.event(recipients, body)
+        client.disconnect()
         return response
 
 
@@ -36,12 +35,16 @@ class Client(models.Model):
     user = models.ForeignKey(User, verbose_name=_('user'))
     objects = ClientManager()
 
+    def __unicode__(self):
+        return u"%s, channel %s on %s (%s)" % (self.user.username, self.channel,
+                                               self.callback, self.session_key)
+
     def get_recipient(self):
         recipient = "%s@%s, %s, /orbited" % (self.user.username, 
-                                           self.session_key, self.user.id)
+                                             self.session_key, self.user.id)
         return recipient
 
-    def send(self, data, as_json=True):
+    def send(self, data):
         client = OrbitedClient()
         if hasattr(settings, 'ORBITED_PORT'):
             client.port = settings.ORBITED_PORT
