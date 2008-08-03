@@ -12,13 +12,17 @@ def destroy_clients(request):
     """Destroy Orbited clients from django_orbited models on unload
     browser event.
     """
-    if request.POST and 'channels' in request.POST and 'id' in request.POST:
+    if request.POST and 'channels' in request.POST:
         channels = simplejson.loads(request.POST.get('channels'))
-        user_id = simplejson.loads(request.POST.get('id'))
-        user = get_object_or_404(User, id=user_id)
         session_key = request.session.session_key
-        clients = get_list_or_404(Client, user=user, session_key=session_key, \
-                                  channel__in=channels)
+        if 'id' in request.POST:
+            user_id = simplejson.loads(request.POST.get('id'))
+            user = get_object_or_404(User, id=user_id)
+            clients = get_list_or_404(Client, session_key=session_key, \
+                                      user=user, channel__in=channels)
+        else:
+            clients = get_list_or_404(Client, session_key=session_key, \
+                                      channel__in=channels)
         for client in clients:
             client.delete()
         return HttpResponse(simplejson.dumps(True), mimetype="application/json")

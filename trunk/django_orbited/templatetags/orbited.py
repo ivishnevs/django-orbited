@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
 from django.template import Context, Library, Node, TemplateSyntaxError
 from django.template.loader import get_template
 
@@ -24,10 +25,15 @@ class OrbitedFilesNode(Node):
         if hasattr(settings, 'ORBITED_SOCKET_METHOD') \
         and settings.ORBITED_SOCKET_METHOD in ("BinaryTCPSocket", "TCPSocket", "WebSocket"):
             socket_method = settings.ORBITED_SOCKET_METHOD
-        user = context.get('user')
+        user = context.get('user', None)
+        if user and user.id:
+            username = user.username
+            user_id = user.id
+        else:
+            username = 'AnonymousUser'
+            user_id = 0
         session_key = context.get('session_key')
-        recipient = "%s@%s, %s, /orbited" % (user.username, 
-                                             session_key, user.id)
+        recipient = "%s@%s, %s, /orbited" % (username, session_key, user_id)
         t = get_template('orbited_files.html')
         return t.render(Context({
                                  'port': port,
@@ -42,7 +48,7 @@ class OrbitedChannelNode(Node):
     """Include a script HTML tag in order to create Client objects.
 
     For example:
-        {% orbited channel "channel_name" to "callback_javascript" %}
+        {% orbited channel "channel_name" on "callback_javascript" %}
     """
     def __init__(self, channel, callback):
         self.channel = channel
@@ -52,12 +58,14 @@ class OrbitedChannelNode(Node):
         return "<OrbitedChannelNode>"
 
     def render(self, context):
-        user = context.get('user')
+        user = context.get('user', None)
+        if isinstance(user, AnonymousUser):
+            user = None
         session_key = context.get('session_key')
         client, created = Client.objects.get_or_create(user=user,
                                                        channel=self.channel,
-                                                       callback=self.callback)
-        client.session_key = session_key
+                                                       callback=self.callback,
+                                                       session_key=session_key)
         client.save()
         t = get_template('orbited_channel.html')
         return t.render(Context({'client': client}))

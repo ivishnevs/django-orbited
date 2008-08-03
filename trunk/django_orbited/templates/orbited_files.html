@@ -24,13 +24,15 @@ function destroy_{{ session_key }}() {
         xhr_{{ session_key }} = Orbited.create_xhr();
         xhr_{{ session_key }}.open("POST", "{{ static_url }}destroy/", true);
         xhr_{{ session_key }}.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");                  
-        xhr_{{ session_key }}.send('channels=['+ dispatch_list.join(",") +']&id={{ user.id }}');
+        postData = 'channels=['+ dispatch_list.join(",") +']';
+        {% if user.id %}postData += '&id={{ user.id }}';{% endif %}
+        xhr_{{ session_key }}.send(postData);
         xhr_{{ session_key }}.close();
     }
 }
-onunload = document.body.getAttribute("onunload");
-unload = onunload + "; javascript:{destroy_{{ session_key }}();}";
-document.body.setAttribute("onunload", unload);
+onbeforeunload = document.body.getAttribute("onbeforeunload");
+beforeunload = onbeforeunload + "; javascript:{destroy_{{ session_key }}();}";
+document.body.setAttribute("onbeforeunload", beforeunload);
 {% endifequal %}{% ifequal socket_method "WebSocket" %}
 {% endifequal %}{% ifequal socket_method "TCPSocket" %}
 {% endifequal %}{% ifequal socket_method "BinaryTCPSocket" %}
