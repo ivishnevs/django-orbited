@@ -14,6 +14,7 @@ urlpatterns = patterns('',
 
     # Django contrib
     (r'^accounts/login/$', 'django.contrib.auth.views.login', {'template_name': 'login.html'}),
+    (r'^accounts/profile/$', 'views.index'),
     (r'^logout/$', 'django.contrib.auth.views.logout'),
     (r'^admin/(.*)', admin.site.root),
 
