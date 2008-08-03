@@ -18,8 +18,8 @@ class ClientManager(models.Manager):
         for client in clients:
             recipients.append(client.get_recipient())
         client = OrbitedClient()
-        if hasattr(settings, 'ORBITED_PORT'):
-            client.port = int(settings.ORBITED_PORT)
+        if hasattr(settings, 'ORBITED_DISPATCH_PORT'):
+            client.port = int(settings.ORBITED_DISPATCH_PORT)
         client.connect()
         body = {'channel': channel, 'body': data}
         response = client.event(recipients, body)
@@ -29,25 +29,35 @@ class ClientManager(models.Manager):
 
 class Client(models.Model):
     channel = models.CharField(_('Channel'), max_length=250)
-    callback = models.CharField(_('Callback function'), max_length=150)
+    callback = models.CharField(_('Callback function'), max_length=250)
     session_key = models.CharField(_('Session data'), max_length=150, null=True)
 
-    user = models.ForeignKey(User, verbose_name=_('user'))
+    user = models.ForeignKey(User, verbose_name=_('user'), null=True, blank=True)
     objects = ClientManager()
 
     def __unicode__(self):
-        return u"%s, channel %s on %s (%s)" % (self.user.username, self.channel,
-                                               self.callback, self.session_key)
+        if self.user:
+            return u"%s, channel %s on %s (%s)" % (self.user.username,
+                                                   self.channel,
+                                                   self.callback,
+                                                   self.session_key)
+        else:
+            return u"channel %s on %s (%s)" % (self.channel,
+                                               self.callback,
+                                               self.session_key)
 
     def get_recipient(self):
-        recipient = "%s@%s, %s, /orbited" % (self.user.username, 
-                                             self.session_key, self.user.id)
+        if self.user and self.user.id:
+            recipient = "%s@%s, %s, /orbited" % (self.user.username, 
+                                                 self.session_key, self.user.id)
+        else:
+            recipient = "AnonymousUser@%s, 0, /orbited" % (self.session_key)
         return recipient
 
     def send(self, data):
         client = OrbitedClient()
-        if hasattr(settings, 'ORBITED_PORT'):
-            client.port = settings.ORBITED_PORT
+        if hasattr(settings, 'ORBITED_DISPATCH_PORT'):
+            client.port = settings.ORBITED_DISPATCH_PORT
         client.connect()
         recipient = self.get_recipient()
         body = {'channel': self.channel, 'body': data}

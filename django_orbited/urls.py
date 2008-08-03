@@ -2,7 +2,10 @@ from django.conf.urls.defaults import *
 from django.conf import settings
 
 
-urlpatterns = patterns('',
-    (r'^destroy/$', 'django_orbited.views.destroy_clients'),
-    (r'^(.*)$', 'django.views.static.serve', {'document_root': settings.ORBITED_STATIC_PATH, 'show_indexes': True}),
+urlpatterns = patterns('django_orbited.views',
+    (r'^destroy/$', 'destroy_clients'),
+)
+
+urlpatterns += patterns('django.views',
+    (r'^(.*)$', 'static.serve', {'document_root': settings.ORBITED_STATIC_PATH, 'show_indexes': True}),
 )
