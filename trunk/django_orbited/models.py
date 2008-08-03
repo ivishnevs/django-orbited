@@ -8,12 +8,12 @@ from django.utils.translation import ugettext as _
 
 
 class ClientManager(models.Manager):
-    """Send message to all users or users suscribed to a channel"""
-    def send(self, data, channel=None):
-        if channel:
-            clients = Client.objects.filter(channel=channel)
-        else:
-            clients = Client.objects.all()
+    """Perform sengins operations over users set
+    """
+    def send(self, data, channel):
+        """Send message to all users suscribed to a channel
+        """
+        clients = Client.objects.filter(channel=channel)
         recipients = []
         for client in clients:
             recipients.append(client.get_recipient())
@@ -26,6 +26,15 @@ class ClientManager(models.Manager):
         client.disconnect()
         return response
 
+    def multicast(self, data):
+        """Send message to all users suscribed to a channel
+        """
+        responses = []
+        clients = Client.objects.filter()
+        for client in clients:
+            responses.append(client.send(data))
+        return responses
+
 
 class Client(models.Model):
     channel = models.CharField(_('Channel'), max_length=250)
@@ -36,7 +45,7 @@ class Client(models.Model):
     objects = ClientManager()
 
     def __unicode__(self):
-        if self.user:
+        if self.user and self.user.id:
             return u"%s, channel %s on %s (%s)" % (self.user.username,
                                                    self.channel,
                                                    self.callback,
@@ -57,7 +66,7 @@ class Client(models.Model):
     def send(self, data):
         client = OrbitedClient()
         if hasattr(settings, 'ORBITED_DISPATCH_PORT'):
-            client.port = settings.ORBITED_DISPATCH_PORT
+            client.port = int(settings.ORBITED_DISPATCH_PORT)
         client.connect()
         recipient = self.get_recipient()
         body = {'channel': self.channel, 'body': data}
