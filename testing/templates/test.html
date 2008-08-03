@@ -31,8 +31,11 @@ Test page.
 <div id="logs"></div>
 <h3>News</h3>
 <div id="news"></div>
-
+{% if user.is_authenticate %}
 <h2><a href="{% url django.contrib.auth.views.logout %}">Logout</a></h2>
+{% else %}
+<h2><a href="{% url django.contrib.auth.views.login %}">Login</a></h2>
+{% endif %}
 </body>
 
 </html>

@@ -111,6 +111,10 @@ ORBITED_SOCKET_METHOD = "orbited"
 # Orbited server port
 ORBITED_PORT = 8001
 
+# Orbited dispatch port. For Orbited legacy socket 9000 is default value.
+ORBITED_DISPATCH_PORT = 9000
+
+
 # Orbited static files path
 ORBITED_STATIC_PATH = path.join(BASEDIR, '..', 'daemon', 'static')
 
