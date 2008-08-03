@@ -104,8 +104,9 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 CACHE_DEF_EXPIRE = 60 * 60 * 24
 
-# Django project name
-ORBITED_PROJECT_NAME = "testing"
+# Orbited socket method
+# All choices are: WebSocket, TCPSocket, BinaryTCPSocket, orbited (default)
+ORBITED_SOCKET_METHOD = "orbited"
 
 # Orbited server port
 ORBITED_PORT = 8001
