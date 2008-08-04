@@ -12,6 +12,7 @@ log_handler = function (data) {
 }
 </script>
 {% orbited channel "log" on "log_handler" %}
+
 <script language="javascript" type="text/javascript">
 news_handler = function (data) {
     log = document.getElementById("news");
@@ -24,6 +25,7 @@ news_handler = function (data) {
 
 <body>
 {% orbited %}
+
 <h1>django-orbited - Django and Orbited made easy!</h1>
 Test page.
 <h2>Orbited events log</h2>
@@ -31,7 +33,7 @@ Test page.
 <div id="logs"></div>
 <h3>News</h3>
 <div id="news"></div>
-{% if user.is_authenticate %}
+{% if user.id %}
 <h2><a href="{% url django.contrib.auth.views.logout %}">Logout</a></h2>
 {% else %}
 <h2><a href="{% url django.contrib.auth.views.login %}">Login</a></h2>

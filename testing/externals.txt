@@ -3,4 +3,5 @@
 # Apply this file:  svn propset svn:externals -F externals.txt .
 #
 
+django http://code.djangoproject.com/svn/django/trunk/django
 django_orbited https://django-orbited.googlecode.com/svn/trunk/django_orbited
