@@ -116,7 +116,7 @@ ORBITED_DISPATCH_PORT = 9000
 
 
 # Orbited static files path
-ORBITED_STATIC_PATH = path.join(BASEDIR, '..', 'daemon', 'static')
+ORBITED_STATIC_PATH = path.join(path.dirname(BASEDIR), 'daemon', 'static')
 
 # Orbited static files URL
 ORBITED_STATIC_URL = '/orbited/'
