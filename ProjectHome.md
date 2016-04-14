@@ -1,0 +1,1 @@
+The Django framework and Orbited asynchronous server finally working together and without complications. Django-orbit is a component for django adapting Orbited asynchronous server (ideal for reverse ajax / comet) to operate smoothly and in an integrated manner.
